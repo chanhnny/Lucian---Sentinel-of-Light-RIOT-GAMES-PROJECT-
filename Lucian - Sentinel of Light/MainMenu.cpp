@@ -1,4 +1,5 @@
 #include "SFML/Graphics.hpp"
+#include "EpisodeSelect.h"
 #include <iostream>
 
 int main() {
@@ -99,15 +100,90 @@ int main() {
     exitButtonText.setOrigin(exitBounds.width / 2.f, exitBounds.top + exitBounds.height / 2.f);
     exitButtonText.setPosition(centerX, exitButtonRect.getPosition().y + buttonHeight / 2.f);
 
+    float startHoverAlpha = 0.f;
+    float optionsHoverAlpha = 0.f;
+    float exitHoverAlpha = 0.f;
 
-
+    sf::Clock clock;
     // Main loop
     while (window.isOpen()) {
+        float deltaTime = clock.restart().asSeconds();
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+                if (exitButtonRect.getGlobalBounds().contains(mousePos)) {
+                    window.close();
+                }
+
+                if (startButtonRect.getGlobalBounds().contains(mousePos)) {
+                    runEpisodeSelect(window, font);
+                }
+            }
         }
+
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+        bool isStartHovered = startButtonRect.getGlobalBounds().contains(mousePos);
+        bool isOptionsHovered = optionsButtonRect.getGlobalBounds().contains(mousePos);
+        bool isExitHovered = exitButtonRect.getGlobalBounds().contains(mousePos);
+
+        // Animation values
+        static float startHoverAlpha = 0.f;
+        static float optionsHoverAlpha = 0.f;
+        static float exitHoverAlpha = 0.f;
+
+        float prevStartAlpha = startHoverAlpha;
+        float prevOptionsAlpha = optionsHoverAlpha;
+        float prevExitAlpha = exitHoverAlpha;
+
+        auto updateAlpha = [&](float& alpha, bool hovered) {
+            float speed = 3.f;
+            if (hovered)
+                alpha = std::min(1.f, alpha + deltaTime * speed);
+            else
+                alpha = std::max(0.f, alpha - deltaTime * speed);
+            };
+
+        updateAlpha(startHoverAlpha, isStartHovered);
+        updateAlpha(optionsHoverAlpha, isOptionsHovered);
+        updateAlpha(exitHoverAlpha, isExitHovered);
+
+        sf::Color baseColor(20, 30, 60);
+        sf::Color hoverColor(45, 50, 85);
+
+        auto lerpColor = [](sf::Color a, sf::Color b, float t) {
+            return sf::Color(
+                static_cast<sf::Uint8>(a.r + t * (b.r - a.r)),
+                static_cast<sf::Uint8>(a.g + t * (b.g - a.g)),
+                static_cast<sf::Uint8>(a.b + t * (b.b - a.b))
+            );
+            };
+
+        startButtonRect.setFillColor(lerpColor(baseColor, hoverColor, prevStartAlpha));
+        optionsButtonRect.setFillColor(lerpColor(baseColor, hoverColor, prevOptionsAlpha));
+        exitButtonRect.setFillColor(lerpColor(baseColor, hoverColor, prevExitAlpha));
+
+        sf::Color textBaseColor(200, 200, 200);
+        sf::Color textGlowColor(255, 255, 255);
+
+        startButtonText.setFillColor(lerpColor(textBaseColor, textGlowColor, prevStartAlpha));
+        startButtonText.setScale(1.f + prevStartAlpha * 0.05f, 1.f + prevStartAlpha * 0.05f);
+        startButtonText.setOutlineThickness(1.f + prevStartAlpha);
+
+        optionsButtonText.setFillColor(lerpColor(textBaseColor, textGlowColor, prevOptionsAlpha));
+        optionsButtonText.setScale(1.f + prevOptionsAlpha * 0.05f, 1.f + prevOptionsAlpha * 0.05f);
+        optionsButtonText.setOutlineThickness(1.f + prevOptionsAlpha);
+
+        exitButtonText.setFillColor(lerpColor(textBaseColor, textGlowColor, prevExitAlpha));
+        exitButtonText.setScale(1.f + prevExitAlpha * 0.05f, 1.f + prevExitAlpha * 0.05f);
+        exitButtonText.setOutlineThickness(1.f + prevExitAlpha);
+
+        // Draw everything
         window.clear();
         window.draw(backgroundSprite);
         window.draw(titleShadow1);
