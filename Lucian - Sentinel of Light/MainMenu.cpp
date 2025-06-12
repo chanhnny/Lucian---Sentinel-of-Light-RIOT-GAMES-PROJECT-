@@ -1,8 +1,15 @@
 #include "SFML/Graphics.hpp"
 #include "EpisodeSelect.h"
+#include "CursorUtils.h"
 #include <iostream>
 
 int main() {
+    sf::Cursor arrowCursor;
+    sf::Cursor handCursor;
+
+    arrowCursor.loadFromSystem(sf::Cursor::Arrow);
+    handCursor.loadFromSystem(sf::Cursor::Hand);
+
     sf::RenderWindow window(sf::VideoMode(1536, 1024), "Lucian - Sentinel of Light");
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("assets/images/main-menu-background.png")) {
@@ -131,6 +138,10 @@ int main() {
         bool isStartHovered = startButtonRect.getGlobalBounds().contains(mousePos);
         bool isOptionsHovered = optionsButtonRect.getGlobalBounds().contains(mousePos);
         bool isExitHovered = exitButtonRect.getGlobalBounds().contains(mousePos);
+
+        bool hoveringAnything = isStartHovered || isOptionsHovered || isExitHovered;
+
+        updateCursor(window, arrowCursor, handCursor, hoveringAnything);
 
         // Animation values
         static float startHoverAlpha = 0.f;

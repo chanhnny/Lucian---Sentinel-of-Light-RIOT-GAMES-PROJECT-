@@ -31,5 +31,8 @@
     <ClInclude Include="EpisodeSelect.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="CursorUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

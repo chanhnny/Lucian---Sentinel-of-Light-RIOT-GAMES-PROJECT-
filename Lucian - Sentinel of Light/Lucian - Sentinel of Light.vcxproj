@@ -142,6 +142,7 @@
     <Image Include="assets\images\main-menu-background.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CursorUtils.h" />
     <ClInclude Include="EpisodeSelect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
