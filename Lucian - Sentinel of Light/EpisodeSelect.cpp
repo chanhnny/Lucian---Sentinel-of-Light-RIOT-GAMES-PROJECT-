@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "CursorUtils.h"
+#include "EpisodeOne.h"
 #include <iostream>
 
 void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
@@ -15,6 +16,11 @@ void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
         return;
     }
     sf::Sprite backgroundSprite(backgroundTexture);
+
+    static sf::Texture episode1Texture;
+    if (!episode1Texture.loadFromFile("assets/images/episode-one-background.png")) {
+        std::cout << "Failed to load Episode 1 thumbnail\n";
+    }
 
     const float boxWidth = 500.f;
     const float boxHeight = 250.f;
@@ -64,7 +70,14 @@ void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
     for (int row = 0; row < 2; ++row) {
         for (int col = 0; col < 2; ++col) {
             sf::RectangleShape box(sf::Vector2f(boxWidth, boxHeight));
-            box.setFillColor(sf::Color(40, 40, 60));
+
+            if (row == 0 && col == 0) {
+                box.setFillColor(sf::Color::Transparent);
+            }
+            else {
+                box.setFillColor(sf::Color(40, 40, 60));
+            }
+
             box.setOutlineColor(sf::Color(120, 120, 160));
             box.setOutlineThickness(2.f);
 
@@ -89,6 +102,14 @@ void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
         }
     }
 
+    static sf::Sprite episode1Sprite;
+    episode1Sprite.setTexture(episode1Texture);
+    episode1Sprite.setScale(
+        episodeBoxes[0].getSize().x / episode1Texture.getSize().x,
+        episodeBoxes[0].getSize().y / episode1Texture.getSize().y
+    );
+    episode1Sprite.setPosition(episodeBoxes[0].getPosition());
+
     while (window.isOpen()) {
         static sf::Clock clock;
         float deltaTime = clock.restart().asSeconds();
@@ -101,12 +122,15 @@ void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 if (backButton.getGlobalBounds().contains(mousePos)) {
-                    return; // Exit to main menu
+                    return;
+                }
+
+                if (episodeBoxes[0].getGlobalBounds().contains(mousePos)) {
+                    runEpisodeOne(window, font);
                 }
             }
         }
 
-        // --- Hover logic OUTSIDE the event loop ---
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         bool isBackHovered = backButton.getGlobalBounds().contains(mousePos);
         bool hoveringAnything = isBackHovered;
@@ -139,16 +163,23 @@ void runEpisodeSelect(sf::RenderWindow& window, sf::Font& font) {
             backButton.getPosition().y + backButton.getSize().y / 2.f
         );
 
-        // --- DRAW EVERYTHING ---
+        // Draw
         window.clear();
         window.draw(backgroundSprite);
+        for (int i = 0; i < episodeBoxes.size(); ++i) {
+            if (i == 0) {
+                window.draw(episode1Sprite); // Episode 1 image
+                window.draw(episodeBoxes[i]); // Border over it
+            }
+            else {
+                window.draw(episodeBoxes[i]);
+            }
+        }
 
-        for (const auto& box : episodeBoxes) window.draw(box);
-        for (const auto& label : episodeLabels) window.draw(label);
-
+        for (const auto& label : episodeLabels)
+            window.draw(label);
         window.draw(backButton);
         window.draw(backText);
-
         window.display();
     }
 }

@@ -18,6 +18,9 @@
     <Image Include="assets\images\main-menu-background.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\..\Downloads\episode-one-background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainMenu.cpp">
@@ -26,12 +29,18 @@
     <ClCompile Include="EpisodeSelect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EpisodeOne.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EpisodeSelect.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CursorUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EpisodeOne.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

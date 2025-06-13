@@ -135,14 +135,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EpisodeOne.cpp" />
     <ClCompile Include="EpisodeSelect.cpp" />
     <ClCompile Include="MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\episode-one-background.png" />
     <Image Include="assets\images\main-menu-background.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CursorUtils.h" />
+    <ClInclude Include="EpisodeOne.h" />
     <ClInclude Include="EpisodeSelect.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
