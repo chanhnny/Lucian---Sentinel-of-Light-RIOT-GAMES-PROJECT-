@@ -21,6 +21,9 @@
     <Image Include="..\..\..\..\Downloads\episode-one-background.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\..\Downloads\brick-ground.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainMenu.cpp">

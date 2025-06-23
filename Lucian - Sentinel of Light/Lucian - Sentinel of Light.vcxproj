@@ -140,6 +140,7 @@
     <ClCompile Include="MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\brick-ground.png" />
     <Image Include="..\..\..\..\Downloads\episode-one-background.png" />
     <Image Include="assets\images\main-menu-background.png" />
   </ItemGroup>

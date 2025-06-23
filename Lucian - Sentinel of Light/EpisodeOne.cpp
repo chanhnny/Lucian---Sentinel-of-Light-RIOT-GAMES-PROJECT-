@@ -3,21 +3,45 @@
 #include <iostream>
 
 void runEpisodeOne(sf::RenderWindow& window, sf::Font& font) {
-    // Basic ground
-    sf::RectangleShape ground(sf::Vector2f(window.getSize().x, 100));
-    ground.setFillColor(sf::Color(50, 50, 80));
-    ground.setPosition(0, window.getSize().y - 100);
+    // Setup level dimensions
+    const float levelWidth = 3000.f;  // Example map width
 
-    // Load character sprite (test rectangle)
+    // Setup view (camera)
+    sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+
+    // Brick texture
+    sf::Texture brickTexture;
+    if (!brickTexture.loadFromFile("assets/images/brick-ground.png")) {
+        std::cout << "Failed to load brick texture\n";
+        return;
+    }
+    brickTexture.setRepeated(true);
+
+    // Ground setup
+    float groundHeight = window.getSize().y / 3.f;
+    sf::RectangleShape ground(sf::Vector2f(levelWidth, groundHeight));
+    ground.setTexture(&brickTexture);
+    ground.setTextureRect(sf::IntRect(0, 0, levelWidth, groundHeight));
+    ground.setPosition(0, window.getSize().y - groundHeight);
+
+    int repeatFactor = 2;
+    ground.setTextureRect(sf::IntRect(
+        0,
+        0,
+        window.getSize().x * repeatFactor,
+        groundHeight * repeatFactor
+    ));
+
+    // Player setup
     sf::RectangleShape player(sf::Vector2f(60, 80));
     player.setFillColor(sf::Color::Cyan);
-    player.setPosition(100, window.getSize().y - 100 - 80); // On top of ground
+    player.setPosition(100, window.getSize().y - groundHeight - 80);
 
     // Physics
     sf::Vector2f velocity(0.f, 0.f);
-    const float gravity = 1000.f;
+    const float gravity = 2000.f;
     const float moveSpeed = 300.f;
-    const float jumpStrength = -600.f;
+    const float jumpStrength = -800.f;
     bool isOnGround = true;
 
     sf::Clock clock;
@@ -33,28 +57,40 @@ void runEpisodeOne(sf::RenderWindow& window, sf::Font& font) {
 
         // Input
         velocity.x = 0.f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             velocity.x = -moveSpeed;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             velocity.x = moveSpeed;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isOnGround) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && isOnGround) {
             velocity.y = jumpStrength;
             isOnGround = false;
         }
 
-        // Gravity
+        // Gravity and movement
         velocity.y += gravity * dt;
         player.move(velocity * dt);
 
         // Collision with ground
-        float groundLevel = window.getSize().y - 100 - player.getSize().y;
+        float groundLevel = window.getSize().y - groundHeight - player.getSize().y;
         if (player.getPosition().y >= groundLevel) {
             player.setPosition(player.getPosition().x, groundLevel);
             velocity.y = 0.f;
             isOnGround = true;
         }
+
+        // Clamp player to level bounds
+        if (player.getPosition().x < 0)
+            player.setPosition(0, player.getPosition().y);
+        if (player.getPosition().x + player.getSize().x > levelWidth)
+            player.setPosition(levelWidth - player.getSize().x, player.getPosition().y);
+
+        // Update camera
+        float camX = std::max(view.getSize().x / 2.f, player.getPosition().x + player.getSize().x / 2.f);
+        camX = std::min(camX, levelWidth - view.getSize().x / 2.f);
+        view.setCenter(camX, view.getSize().y / 2.f);
+        window.setView(view);
 
         // Draw
         window.clear();
