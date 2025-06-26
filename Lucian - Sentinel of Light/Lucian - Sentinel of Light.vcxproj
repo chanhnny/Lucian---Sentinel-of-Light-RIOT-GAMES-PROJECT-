@@ -138,16 +138,19 @@
     <ClCompile Include="EpisodeOne.cpp" />
     <ClCompile Include="EpisodeSelect.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Downloads\brick-ground.png" />
     <Image Include="..\..\..\..\Downloads\episode-one-background.png" />
+    <Image Include="..\..\..\..\Downloads\lucian-sprite.png" />
     <Image Include="assets\images\main-menu-background.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CursorUtils.h" />
     <ClInclude Include="EpisodeOne.h" />
     <ClInclude Include="EpisodeSelect.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
